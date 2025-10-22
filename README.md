@@ -216,7 +216,7 @@ python start_experiments.py --config tau_sensitivity_douban
 
 
 
-# **RQ4**: Long-tail Analysis (Table 5)
+### **RQ4**: Long-tail Analysis (Table 5)
 
 To reproduce the fine-grained long-tail analysis results from Table 5, we have streamlined the entire process into a single script.
 
