@@ -1,0 +1,408 @@
+experiment:
+  backend: pytorch
+
+  data_config:
+    strategy: fixed
+    train_path: ../data/{0}/splitting/0/0/train.tsv
+    validation_path: ../data/{0}/splitting/0/0/val.tsv
+    test_path: ../data/{0}/splitting/0/test.tsv
+  dataset: amazon-cds
+
+  top_k: 20
+  evaluation:
+    cutoffs: [10, 20]
+    simple_metrics: [Recall, nDCG]
+
+  gpu: 0
+  external_models_path: ../external/models/__init__.py
+
+  models:
+
+    Random:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+      seed: 42
+
+    MostPop:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+
+    ItemKNN:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      neighbors: [uniform, 5, 1000]
+      asymmetric_alpha: [uniform, 0, 2]
+      tversky_alpha: [uniform, 0, 2]
+      tversky_beta: [uniform, 0, 2]
+      similarity: [cosine, jaccard, dot, asym, tversky]
+
+    EASER:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      l2_norm: [uniform, 10, 10e5]
+      neighborhood: -1
+
+    RP3beta:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      neighborhood: [uniform, 50, 10000]
+      alpha: [uniform, 0, 5]
+      beta: [uniform, 0, 5]
+      normalize_similarity: [True, False]
+
+    external.SVDGCN:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: 64
+      epochs: 15
+      batch_size: 128
+      l_w: 0.01
+      lr: [uniform, 7, 9]
+      req_vec: [quniform, 60, 90, 1]
+      beta: 2.0
+      alpha: [uniform, 2, 3]
+      coef_u: [loguniform, -2.30258509299, -0.105360516]  # 0.1 - 0.9
+      coef_i: [loguniform, -2.30258509299, -0.105360516]  # 0.1 - 0.9
+      seed: 123
+
+    external.SVDGCNS:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      req_vec: [quniform, 15, 90, 1]
+      beta: [uniform, 2.0, 6.0]
+      alpha: [uniform, 2.0, 6.0]
+      seed: 42
+
+    external.FPSR:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      eigen_dim: [64,128,256]
+      batch_size: 64  # only for evaluation
+      l_w: [0.1, 0.2, 0.3, 0.4, 0.5]
+      rho: 500
+      w_1: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      w_2: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      eta: [0.01, 0.1, 1]
+      eps: 5e-3
+      tau: [0.1, 0.2, 0.3, 0.4, 0.5]
+      seed: 2026
+
+    external.PSGE:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: [quniform, 10, 2000, 1]
+      alpha: [uniform, 0, 1]
+      beta: [uniform, 0, 1]
+      seed: 42
+
+    external.SGMC:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: [quniform, 10, 2000, 1]
+      seed: 42
+
+    PureSVD:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: [quniform, 10, 2000, 1]
+      seed: 42
+
+    RSVD:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: [quniform, 10, 2000, 1]
+      reg: [loguniform, -4.605170186, 6.907755278]
+      seed: 42
+
+    external.SVD_AE:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      factors: [quniform, 10, 2000, 1]
+      seed: 42
+
+    external.GFCF:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      svd_factors: [choice, [64, 128, 256]]
+      alpha: [loguniform, -2.30258509299, -0.22314355131]
+      seed: 42
+
+    external.BSPM:
+      meta:
+        validation_metric: Recall@20
+        verbose: False
+        save_recs: False
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      batch_eval: 512
+      factors: [quniform, 100, 800, 1]
+      idl_solver: [euler, rk4]
+      blur_solver: [euler, rk4]
+      sharpen_solver: [euler, rk4]
+      K_idl: [1,2,3,4]
+      T_idl: [quniform, 1.0, 5.0, 0.1]
+      K_b: [1,2,3,4]
+      T_b: [quniform, 1.0, 5.0, 0.1]
+      K_s: [1,2,3,4]
+      T_s: [quniform, 1.0, 5.0, 0.1]
+      idl_beta: [quniform, 0.0, 1.0, 0.1]
+      final_sharpening: [True, False]
+      sharpening_off: [True, False]
+      t_point_combination: [True, False]
+      seed: 42
+
+    external.ChebyCF:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_opt_alg: tpe
+        hyper_max_evals: 20
+      batch_eval: 1024
+      K: 8
+      phi: [quniform, 1, 20, 0.5]
+      eta: [128,256,512,1024,2048]
+      alpha: [0.0,0.1,0.2,0.3,0.4,0.5]
+      beta: [0.0,0.1,0.2,0.3,0.4,0.5]
+      seed: 42
+
+    external.LightGCN:
+      meta:
+        hyper_opt_alg: tpe
+        hyper_max_evals: 20
+        verbose: False
+        save_weights: False
+        validation_rate: 10
+        validation_metric: Recall@20
+        restore: False
+        write_best_iterations: True
+      lr: 0.001
+      epochs: 1000
+      factors: 64
+      batch_size: 2048
+      l_w: [loguniform, -13.815510558, -4.60517018599]
+      n_layers: [choice, [1, 2, 3, 4]]
+      normalize: True
+      seed: 42
+      early_stopping:
+        patience: 5
+        mode: auto
+        monitor: Recall@20
+        verbose: True
+
+    external.FPSRplus:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      eigen_dim: [64,128,256]
+      batch_size: 64
+      l_w: [0.1, 0.2, 0.3, 0.4, 0.5]
+      rho: 500
+      w_1: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      w_2: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      eta: [0.01, 0.1, 1]
+      eps: 5e-3
+      tau: [0.1, 0.2, 0.3, 0.4, 0.5]
+      pop_ratio: 0.1
+      seed: 2026
+
+    external.FPSRplusF:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      eigen_dim: [64,128,256]
+      batch_size: 64
+      l_w: [0.1, 0.2, 0.3, 0.4, 0.5]
+      rho: 500
+      w_1: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      w_2: [0.1, 0.2, 0.5, 0.8, 1, 2, 5]
+      eta: [0.01, 0.1, 1]
+      eps: 5e-3
+      tau: [0.1, 0.2, 0.3, 0.4, 0.5]
+      pop_ratio: 0.1
+      seed: 2026
+
+    external.GDE:
+      meta:
+        hyper_opt_alg: tpe
+        hyper_max_evals: 20
+        save_recs: False
+        verbose: False
+        validation_rate: 5
+        validation_metric: Recall@20
+      batch_size: 256
+      factors: 64
+      l_w: 0.01
+      feature_type: smoothed
+      smooth_ratio: [0.01, 0.05, 0.1, 0.2]
+      rough_ratio: 0.0
+      epochs: 500
+      lr: [loguniform, -6.907755278, -2.995732274]
+      dropout: [0.1, 0.2, 0.3, 0.4, 0.5]
+      beta: [quniform, 0.5, 5.0, 0.5]
+      loss_type: [adaptive, bpr]
+      seed: 42
+      early_stopping:
+        patience: 5
+        mode: auto
+        monitor: Recall@20
+        verbose: True
+
+    external.CSGDE:
+      meta:
+        hyper_opt_alg: tpe
+        hyper_max_evals: 20
+        save_recs: False
+        verbose: False
+        validation_rate: 5
+        validation_metric: Recall@20
+      batch_size: 256
+      factors: 64
+      l_w: 0.01
+      feature_type: smoothed
+      smooth_ratio: [0.01, 0.05, 0.1, 0.2]
+      rough_ratio: 0.0
+      epochs: 500
+      lr: [loguniform, -6.907755278, -2.995732274]
+      dropout: [0.1, 0.2, 0.3, 0.4, 0.5]
+      beta: [quniform, 0.5, 5.0, 0.5]
+      loss_type: [adaptive, bpr]
+      coef_u: [loguniform, -2.30258509299, -0.105360516]  # 0.1 - 0.9
+      coef_i: [loguniform, -2.30258509299, -0.105360516]  # 0.1 - 0.9
+      seed: 42
+      early_stopping:
+        patience: 5
+        mode: auto
+        monitor: Recall@20
+        verbose: True
+
+    external.BISM:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      alpha: [loguniform, -4.605170186, 2.302585093] # 0.01 - 10
+      beta: [loguniform, -4.605170186, 4.605170186] # 0.01 - 100
+      lamb: [loguniform, -2.302585093, 4.605170186] # 0.1 - 100
+      epochs: 20
+      batch_size: 2048
+      c: [quniform, 1, 10, 1]
+      seed: 42
+
+    external.LinkProp:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      alpha: 0.0
+      beta: [0.0, 0.17, 0.34, 0.5, 0.67, 0.84, 1.0]
+      gamma: [0.0, 0.17, 0.34, 0.5, 0.67, 0.84, 1.0]
+      delta: [0.0, 0.17, 0.34, 0.5, 0.67, 0.84, 1.0]
+      seed: 42
+
+    external.TurboCF:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      alpha: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+      power: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+      filter: [1,2]
+      batch_eval: 1024
+      seed: 2022
+
+    Slim:
+      meta:
+        save_recs: False
+        verbose: False
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      alpha: [loguniform, -6.907755278, 0]
+      l1_ratio: [loguniform, -6.907755278, 0]
+      neighborhood: [uniform, 5, 1000]
+
+    external.MRF:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      l2_norm: [loguniform, 0, 9.210340372] # 1 - 10000
+      seed: 42
+
+    external.BiRank:
+      meta:
+        save_recs: False
+        verbose: True
+        validation_metric: Recall@20
+        hyper_max_evals: 20
+        hyper_opt_alg: tpe
+      alpha: [0.1,0.15,0.2,0.25,0.3,0.35,0.4]
+      beta: [0.1,0.15,0.2,0.25,0.3,0.35,0.4]
+      seed: 42
