@@ -240,10 +240,14 @@ Note that, within this script, you can accurately check the list of experiments 
 ---
 
 
+## 👥 Authors
+- Domenico de Gioia (domenico.degioia@poliba.it)
+- Claudio Pomo (claudio.pomo@poliba.it)
+- Ludovico Boratto (ludovico.boratto@unica.it)
+- Tommaso Di Noia (tommaso.dinoia@poliba.it)
 
 
-
-
+---
 
 
 
