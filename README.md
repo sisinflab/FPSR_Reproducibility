@@ -257,5 +257,17 @@ Note that, within this script, you can accurately check the list of experiments 
 
 If you find this work useful for your research, please cite our paper:
 ```
-TBA
+@inproceedings{DBLP:conf/ecir/GioiaPBN26,
+  author       = {Domenico de Gioia and
+                  Claudio Pomo and
+                  Ludovico Boratto and
+                  Tommaso Di Noia},
+  title        = {A Reproducible and Fair Evaluation of Partition-Aware Collaborative
+                  Filtering},
+  booktitle    = {{ECIR} {(3)}},
+  series       = {Lecture Notes in Computer Science},
+  pages        = {131--145},
+  publisher    = {Springer},
+  year         = {2026}
+}
 ```
